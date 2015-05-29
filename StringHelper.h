@@ -32,6 +32,7 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <stdexcept>
 #include "vec3.h"
 #include "mat4.h"
 
@@ -72,6 +73,7 @@ public:
 		delims.push_back(' ');
 		delims.push_back('\n');
 		delims.push_back('\r');
+        delims.push_back('\t');
 		std::vector<T> tarray;
 		std::string str="";
 		int slen = string.length();
@@ -84,8 +86,14 @@ public:
 						tarray.push_back(f);
 						str = "";
 					}
-					else
-                        throw 1;
+					else {
+                        std::stringstream ss;
+                        ss << "COLLADA import error: the following string cannot be parsed as array element: '";
+                        ss << str << "', with ASCII codes ";
+                        for (int j=0; j<str.length(); j++) 
+                            ss << (int)str[j] << " ";                        
+                        throw std::runtime_error(ss.str());
+                    }
 				}
 			}
 			else
@@ -97,8 +105,14 @@ public:
 				tarray.push_back(f);
 				str = "";
 			}
-            else
-                throw 1;
+			else {
+                std::stringstream ss;
+                ss << "COLLADA import error: the following string cannot be parsed as array element: '";
+                ss << str << "', with ASCII codes ";
+                for (int j=0; j<str.length(); j++) 
+                    ss << (int)str[j] << " ";                        
+                throw std::runtime_error(ss.str());
+            }
 		}
 
 		return tarray;
